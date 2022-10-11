@@ -35,29 +35,69 @@
 
   const programming = [
     {
+      type: "scripting",
       title: "Python",
       value: "100%",
     },
     {
+      type: "scripting",
       title: "R",
       value: "100%",
     },
     {
+      type: "deployment",
       title: "Helm",
-      value: "90%",
+      value: "80%",
     },
     {
+      type: "deployment",
+      title: "Kubernetes Manifests",
+      value: "80%",
+    },
+    {
+      type: "scripting",
       title: "js/ts",
       value: "60%",
     },
     {
+      type: "scripting",
       title: "Rust",
       value: "40%",
     },
+    {
+      type: "scripting",
+      title: "Bash",
+      value: "80%",
+    },
+    {
+      type: "scripting",
+      title: "Powershell",
+      value: "80%",
+    },
+    {
+      type: "integration",
+      title: "Azure Pipelines",
+      value: "100%",
+    },
+    {
+      type: "integration",
+      title: "Github Actions",
+      value: "70%",
+    },
   ];
+
+  $: scriptingLangs = programming.filter((lang) => {
+    return lang.type === "scripting";
+  });
+  $: integrationLangs = programming.filter((lang) => {
+    return lang.type === "integration";
+  });
+  $: deploymentLangs = programming.filter((lang) => {
+    return lang.type === "deployment";
+  });
 </script>
 
-<div class="flex flex-col {width} bg-gray-600 rounded-xl overflow-hidden">
+<div class="flex flex-col {width} bg-gray-600 rounded-xl overflow-auto">
   <div class="flex flex-col items-center bg-gray-700 p-4">
     <div
       class="flex w-20 h-20 items-center justify-center bg-white rounded-full mb-4"
@@ -85,18 +125,30 @@
       {/each}
     </SlidedownMenu>
   </SlidedownMenu>
-  <div class="px-4 py-2">
-    <div class="font-bold text-white border-b-2 py-1 mb-2">Programming</div>
-    {#each programming as _programming}
-      <div class="flex flex-row justify-between text-xs">
-        <div class="text-white font-bold w-4/12">{_programming.title}:</div>
-        <div class="w-8/12 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-          <div
-            class="bg-yellow-500 h-2.5 rounded-full"
-            style="width: {_programming.value}"
-          />
+  <SlidedownMenu title="Programming">
+    <SlidedownMenu title="Scripting">
+      {#each scriptingLangs as skill}
+        <div class="flex flex-row justify-between text-xs">
+          <div class="text-white font-bold">{skill.title}:</div>
+          <div class="text-gray-400">{skill.value}</div>
         </div>
-      </div>
-    {/each}
-  </div>
+      {/each}
+    </SlidedownMenu>
+    <SlidedownMenu title="Continuous Integration">
+      {#each integrationLangs as skill}
+        <div class="flex flex-row justify-between text-xs">
+          <div class="text-white font-bold">{skill.title}:</div>
+          <div class="text-gray-400">{skill.value}</div>
+        </div>
+      {/each}
+    </SlidedownMenu>
+    <SlidedownMenu title="Continuous Deployment">
+      {#each deploymentLangs as skill}
+        <div class="flex flex-row justify-between text-xs">
+          <div class="text-white font-bold">{skill.title}:</div>
+          <div class="text-gray-400">{skill.value}</div>
+        </div>
+      {/each}
+    </SlidedownMenu>
+  </SlidedownMenu>
 </div>
