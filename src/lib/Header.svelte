@@ -37,12 +37,12 @@
     {
       type: "scripting",
       title: "Python",
-      value: "100%",
+      value: 100,
     },
     {
       type: "scripting",
       title: "R",
-      value: "100%",
+      value: 100,
     },
     {
       type: "deployment",
