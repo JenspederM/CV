@@ -1,16 +1,23 @@
 <script>
-  import Header from "./lib/Header.svelte";
+  import Blog from "./lib/Blog.svelte";
+  import Projects from "./lib/Projects.svelte";
+  import Profile from "./lib/Profile.svelte";
+
+  let bp = "lg";
 </script>
 
-<div class="flex flex-col items-center w-full absolute inset-0 bg-gray-800 p-4">
+<div
+  class="flex flex-col items-center w-full absolute overflow-auto inset-0 bg-slate-700 p-4"
+>
   <div
-    class="flex flex-col lg:flex-row w-full space-y-4 lg:space-x-4 lg:space-y-0 overflow-auto"
+    class="flex flex-col flex-grow w-full space-y-4 xl:w-3/4 lg:space-y-0 lg:space-x-4 lg:flex-row"
   >
-    <Header width="w-full lg:w-3/12 xl:w-2/12" />
-    <div
-      class="flex flex-col flex-grow w-full lg:w-9/12 xl:w-10/12 text-white p-4 bg-gray-600 rounded-xl"
-    >
-      <div class="">Content</div>
+    <Profile class="w-full lg:w-1/3 lg:flex-grow" />
+    <Blog class="lg:hidden" />
+    <Projects class="lg:hidden" />
+    <div class="hidden lg:flex w-2/3 flex-col space-y-4">
+      <Blog class="lg:h-2/5" />
+      <Projects class="lg:h-3/5" />
     </div>
   </div>
 </div>
