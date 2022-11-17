@@ -9,7 +9,9 @@
 </script>
 
 <Box
-  class="flex flex-col items-center space-y-1 sm:space-y-0 sm:flex-row sm:justify-between"
+  class={`flex flex-col items-center space-y-1 sm:space-y-0 sm:flex-row sm:justify-between ${
+    $$props.class || ""
+  }`}
 >
   <a href="tel:+4560964106">
     <ContactDetail faIcon={faPhone} info="(+45) 60 46 91 06" />
