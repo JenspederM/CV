@@ -1,0 +1,86 @@
+[
+  {
+    "show": true,
+    "showDetails": false,
+    "type": "Formal",
+    "title": "MSc., Operations & Supply Chain Management",
+    "faculty": "Aalborg University",
+    "link": "https://www.en.aau.dk/education/master/management-engineering/operations-and-supply-chain-management",
+    "grade": "11.63",
+    "GPA": 3.9,
+    "from": 2017,
+    "to": 2019,
+    "thesis": "The Effect of Temporal Aggregation & External Factors on Forecast Performance at Norsk Hydro ASA",
+    "thesisGrade": 12
+  },
+  {
+    "show": true,
+    "showDetails": false,
+    "type": "Formal",
+    "title": "BSc., Global Business Engineering",
+    "faculty": "Aalborg University",
+    "link": "https://www.aau.dk/uddannelser/bachelor/globale-forretningssystemer",
+    "grade": "7.92",
+    "GPA": 3.21,
+    "from": 2014,
+    "to": 2017,
+    "thesis": "Improving Shareholder Value & Creating Overview at Greenland Facility Services A/S",
+    "thesisGrade": 7
+  },
+  {
+    "show": true,
+    "showDetails": false,
+    "type": "Online",
+    "title": "Computer Science: Programming with a Purpose",
+    "faculty": "Princeton University",
+    "link": "https://www.coursera.org/learn/cs-programming-java",
+    "from": 2018,
+    "to": 2018,
+    "grade": "91.3%"
+  },
+  {
+    "show": true,
+    "showDetails": false,
+    "type": "Online",
+    "title": "Data Scientist with Python",
+    "faculty": "DataCamp",
+    "from": 2017,
+    "to": 2017
+  },
+  {
+    "show": true,
+    "showDetails": false,
+    "type": "Online",
+    "title": "Data Scientist with R",
+    "faculty": "DataCamp",
+    "from": 2017,
+    "to": 2017
+  },
+  {
+    "show": true,
+    "showDetails": false,
+    "type": "Online",
+    "title": "R Programmer",
+    "faculty": "DataCamp",
+    "from": 2017,
+    "to": 2017
+  },
+  {
+    "show": true,
+    "showDetails": false,
+    "type": "Online",
+    "title": "Python Programmer",
+    "faculty": "DataCamp",
+    "from": 2017,
+    "to": 2017
+  },
+  {
+    "show": false,
+    "showDetails": false,
+    "type": "Formal",
+    "title": "Mathematics & Physics",
+    "faculty": "Holstebro Gymnasium",
+    "from": 2009,
+    "to": 2012
+  }
+]

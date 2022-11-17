@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { Styles } from "../styles";
-
   let xp = {
     picture: "../assets/velux_logo_600x300.png",
     period: "2019 - 2021",
@@ -29,7 +27,7 @@
   };
 </script>
 
-<div class={`${$$props.class || ""} ${Styles.BoxStyle || ""}`}>
+<div class={`${$$props.class || ""}`}>
   <div class="space-y-2">
     <div class="flex items-center justify-center w-full">
       <img
