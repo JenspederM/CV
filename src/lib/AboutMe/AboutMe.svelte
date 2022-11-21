@@ -2,7 +2,6 @@
   import Box from "../common/Box.svelte";
   import MobileLayout from "./MobileLayout.svelte";
   import DesktopLayout from "./DesktopLayout.svelte";
-  export let breakpoint: string = "sm";
 </script>
 
 <div
@@ -11,7 +10,7 @@
   <Box
     class="flex-grow p-0 sm:flex-grow-0 items-center justify-center overflow-hidden"
   >
-    <MobileLayout {breakpoint} />
-    <DesktopLayout {breakpoint} />
+    <MobileLayout />
+    <DesktopLayout />
   </Box>
 </div>
