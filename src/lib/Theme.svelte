@@ -24,7 +24,7 @@
   <button
     on:click={() => (isDark = !isDark)}
     hidden={dynamicOpacity < 0.1}
-    class="z-50 absolute top-6 right-6 float-right px-1 rounded-full bg-gray-700"
+    class="z-50 absolute top-6 right-6 float-right px-2 py-1 rounded-full bg-gray-700"
     style="opacity: {dynamicOpacity}"
   >
     {isDark ? "☀️" : "🌙"}
@@ -33,8 +33,6 @@
   <!-- Main Container-->
   <div
     class="flex flex-col items-center overflow-auto p-4 {background} {text} {border}"
-    bind:this={elem}
-    on:scroll={(e) => (y = elem.scrollTop || 0)}
   >
     <div class="w-full h-full space-y-4 md:w-4/5 lg:w-2/3 border-inherit">
       <slot />
