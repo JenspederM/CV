@@ -1,13 +1,12 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import ProfilePicture from "../../assets/Profile.jpeg";
   import Name from "./Name.svelte";
   import SocialMedia from "./SocialMedia.svelte";
-
-  export let breakpoint: string = "sm";
 </script>
 
 <div
-  class="relative flex flex-col flex-grow justify-around w-full h-full items-center {breakpoint}:hidden"
+  class="sm:hidden relative flex flex-col flex-grow justify-around w-full h-full items-center"
 >
   <div
     class="flex flex-col flex-grow space-y-4 items-center justify-center w-full py-4"
