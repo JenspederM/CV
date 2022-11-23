@@ -1,18 +1,38 @@
 <script lang="ts">
-  import { jsPDF } from "jspdf";
-  import "../fonts/fa-brands-400-normal";
+  import { Section, Margin } from "../../resume-generator";
 
-  const PAGE_WIDTH = 595;
-  const PAGE_HEIGHT = 842;
-  const DEF_FONT_SIZE = 12;
+  const resume = new Section().setMargin(
+    new Margin({ top: 0, bottom: 0, left: 0, right: 0 })
+  );
 
-  const doc = new jsPDF({
-    orientation: "portrait",
-    unit: "px",
-    format: [PAGE_WIDTH, PAGE_HEIGHT],
-    precision: 1,
-    floatPrecision: "smart",
-  });
+  const sidebar = new Section(resume)
+    .setSize({ width: 200, height: 842 })
+    .setMargin(Margin.large())
+    .setBackgroundColor("slate-700");
+
+  const contact = new Section(sidebar, { width: 200, height: 200 })
+    .setMargin(Margin.medium())
+    .setBackgroundColor("slate-800", 4)
+    .addText({
+      text: "Jens Peder Meldgaard",
+      fontSize: 18,
+      align: "center",
+      color: "gray-300",
+      background: "white",
+    })
+    .addText({
+      text: "Jack of All Trades",
+      fontSize: 12,
+      align: "center",
+      color: "gray-300",
+      background: "gray-400",
+    });
+
+  const content = new Section(resume)
+    .setSize()
+    .setMargin(Margin.medium())
+    .setOffset({ x: 200 })
+    .setBackgroundColor("gray-800");
 
   const brands = [
     { icon: "\uf09b", url: "www.github.com/jenspederm" },
@@ -20,70 +40,68 @@
     { icon: "\uf099", url: "www.twitter.com/Peder0202" },
   ];
 
-  doc.setFontSize(10);
-
-  const drawRect = (x, y, w, h, color, round = null) => {
-    switch (color) {
-      case "black":
-        doc.setFillColor(0, 0, 0);
-        break;
-      case "gray":
-        doc.setFillColor(209, 213, 219);
-        break;
-      case "red":
-        doc.setFillColor(255, 0, 0);
-        break;
-      case "green":
-        doc.setFillColor(0, 255, 0);
-        break;
-      case "blue":
-        doc.setFillColor(0, 0, 255);
-        break;
-      default:
-        doc.setFillColor(255, 255, 255);
-        break;
-    }
-    if (round) {
-      doc.roundedRect(x, y, w, h, 2, 2, "F");
-    } else {
-      doc.rect(x, y, w, h, "F");
-    }
-  };
-
   const download = () => {
     // Set Default Font
-    doc.setFontSize(DEF_FONT_SIZE);
 
-    // Add Background
-    drawRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT, "gray");
+    /*
+    resume.doc.line(
+      resume._getDynamicWidth(30),
+      resume.defaults.margins.top,
+      resume._getDynamicWidth(30),
+      resume.defaults.height - resume.defaults.margins.bottom
+    );
+
+    resume.drawTextBubble(
+      ["Jens Peder Meldgaard"],
+      resume.defaults.margins.left + resume.defaults.margins.left,
+      resume.defaults.margins.top + resume.defaults.margins.top,
+      "black",
+      false,
+      "S"
+    );
+
+    */
 
     // Add Header
-    drawRect(32, 16, PAGE_WIDTH - 32 * 2, 56, "white", true);
-    doc.text(
+    /*
+    resume.drawTextBubble(
       [
         "Jens Peder Meldgaard",
         "DevOps Engineer",
         "Data Scientist",
         "Fullstack Developer",
+        "Another thing",
+        "A third thing",
       ],
-      48,
-      24,
-      { baseline: "top" }
+      resume.defaults.outerMargins.left,
+      16,
+      "white",
+      true,
+      "S",
+      { align: "center", maxWidth: 0 }
     );
-    doc.setFont("fa-brands-400");
+    */
 
     // Add Social Media Icons
-    doc.setFontSize(16);
+    /*
     brands.forEach((brand, index) => {
-      doc.textWithLink(brand.icon, PAGE_WIDTH - 56 - index * 24, 24, {
-        url: brand.url,
-        baseline: "top",
+      resume.addIcon({
+        icon: brand.icon,
+        x: resume.defaults.width - 32 - 16 * (index + 1),
+        y: 24,
+        linkOptions: {
+          url: brand.url,
+          baseline: "top",
+        },
       });
     });
-    doc.setFontSize(DEF_FONT_SIZE);
+    */
 
     // Save PDF
-    doc.save("resume.pdf");
+    //resume.generate();
+
+    resume.render({ preview: true });
+    //resume.doc.output("pdfobjectnewwindow");
   };
 </script>
 

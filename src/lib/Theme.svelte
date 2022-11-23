@@ -1,10 +1,19 @@
 <script lang="ts">
   import Fa from "svelte-fa";
   import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+  import { isDarkMode } from "../stores";
 
   let elem;
   let y;
   let isDark = true;
+
+  isDarkMode.subscribe((value) => {
+    isDark = value;
+  });
+
+  const toggleDarkMode = () => {
+    isDarkMode.update((value) => !value);
+  };
 
   let background = "bg-gray-300 dark:bg-gray-700";
   let text = "text-gray-700 dark:text-gray-300";
@@ -22,7 +31,7 @@
 <div class="min-w-full min-h-screen {isDark ? 'dark' : ''}">
   <!-- Dark Mode Button-->
   <button
-    on:click={() => (isDark = !isDark)}
+    on:click={() => toggleDarkMode()}
     hidden={dynamicOpacity < 0.1}
     class="z-50 absolute top-6 right-6 float-right px-2 py-1 rounded-full bg-gray-700"
     style="opacity: {dynamicOpacity}"
