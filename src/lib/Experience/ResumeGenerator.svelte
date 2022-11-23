@@ -1,38 +1,15 @@
 <script lang="ts">
-  import { Section, Margin } from "../../resume-generator";
+  import { Section, Margin, Document } from "../../resume-generator";
+  import { isDarkMode } from "../../stores";
 
-  const resume = new Section().setMargin(
-    new Margin({ top: 0, bottom: 0, left: 0, right: 0 })
-  );
-
-  const sidebar = new Section(resume)
-    .setSize({ width: 200, height: 842 })
-    .setMargin(Margin.large())
-    .setBackgroundColor("slate-700");
-
-  const contact = new Section(sidebar, { width: 200, height: 200 })
-    .setMargin(Margin.medium())
-    .setBackgroundColor("slate-800", 4)
-    .addText({
-      text: "Jens Peder Meldgaard",
-      fontSize: 18,
-      align: "center",
-      color: "gray-300",
-      background: "white",
-    })
-    .addText({
-      text: "Jack of All Trades",
-      fontSize: 12,
-      align: "center",
-      color: "gray-300",
-      background: "gray-400",
-    });
-
-  const content = new Section(resume)
-    .setSize()
-    .setMargin(Margin.medium())
-    .setOffset({ x: 200 })
-    .setBackgroundColor("gray-800");
+  let darkMode: boolean;
+  let nPressed = {
+    value: 0,
+    lastDarkMode: false,
+  };
+  isDarkMode.subscribe((value) => {
+    darkMode = value;
+  });
 
   const brands = [
     { icon: "\uf09b", url: "www.github.com/jenspederm" },
@@ -40,74 +17,102 @@
     { icon: "\uf099", url: "www.twitter.com/Peder0202" },
   ];
 
+  const theme = {
+    background: {
+      primary: {
+        light: "gray-300",
+        dark: "gray-700",
+      },
+      secondary: {
+        light: "gray-200",
+        dark: "gray-800",
+      },
+    },
+    textOptions: {
+      color: {
+        light: "gray-300",
+        dark: "gray-700",
+      },
+      font: "Roboto",
+      fontSize: 12,
+    },
+    borderColors: {
+      light: "gray-400",
+      dark: "gray-600",
+    },
+    width: 595,
+    height: 842,
+  };
+
   const download = () => {
-    // Set Default Font
+    if (nPressed.value === 0) {
+      nPressed.value++;
+      nPressed.lastDarkMode = darkMode;
+    } else if (nPressed.value > 1 && nPressed.lastDarkMode === darkMode) {
+      nPressed.value++;
+    } else {
+      nPressed.value = 0;
+    }
 
     /*
-    resume.doc.line(
-      resume._getDynamicWidth(30),
-      resume.defaults.margins.top,
-      resume._getDynamicWidth(30),
-      resume.defaults.height - resume.defaults.margins.bottom
-    );
+    const resume = new Section({ theme: theme })
+      .setMargin(Margin.medium())
+      .setBackgroundColor({ color: "primary", isDarkMode: darkMode });
 
-    resume.drawTextBubble(
-      ["Jens Peder Meldgaard"],
-      resume.defaults.margins.left + resume.defaults.margins.left,
-      resume.defaults.margins.top + resume.defaults.margins.top,
-      "black",
-      false,
-      "S"
-    );
-
-    */
-
-    // Add Header
-    /*
-    resume.drawTextBubble(
-      [
-        "Jens Peder Meldgaard",
-        "DevOps Engineer",
-        "Data Scientist",
-        "Fullstack Developer",
-        "Another thing",
-        "A third thing",
-      ],
-      resume.defaults.outerMargins.left,
-      16,
-      "white",
-      true,
-      "S",
-      { align: "center", maxWidth: 0 }
-    );
-    */
-
-    // Add Social Media Icons
-    /*
-    brands.forEach((brand, index) => {
-      resume.addIcon({
-        icon: brand.icon,
-        x: resume.defaults.width - 32 - 16 * (index + 1),
-        y: 24,
-        linkOptions: {
-          url: brand.url,
-          baseline: "top",
-        },
+    const sidebar = new Section({ parent: resume })
+      .setSize({ width: 200, height: 842 })
+      .setMargin(Margin.large())
+      .setBackgroundColor({
+        color: "secondary",
+        isDarkMode: darkMode,
+        round: 4,
       });
-    });
-    */
 
-    // Save PDF
-    //resume.generate();
+    new Section({ parent: sidebar, width: 200, height: 100 })
+      .setMargin(Margin.medium())
+      .setBackgroundColor({ color: "primary", isDarkMode: darkMode, round: 4 })
+      .addText({
+        text: ["Jens Peder Meldgaard"],
+        fontSize: 18,
+        align: "center",
+        background: "secondary",
+        padding: new Margin({ top: 4, bottom: 4, left: 0 }),
+      })
+      .addText({
+        text: "Jack of All Trades",
+        fontSize: 12,
+        align: "center",
+      });
 
-    resume.render({ preview: true });
-    //resume.doc.output("pdfobjectnewwindow");
+    const content = new Section({ parent: resume })
+      .setMargin(Margin.medium())
+      .setOffset({ x: 208 })
+      .setBackgroundColor({
+        color: "secondary",
+        isDarkMode: darkMode,
+        round: 4,
+      });
+
+      */
+
+    const doc = new Document(theme).setIsDarkMode(darkMode).setBackground();
+
+    doc.render({ preview: true });
+
+    //resume.render({ preview: true });
   };
 </script>
 
-<button
-  class="py-2 px-4 text-xs bg-gray-600 hover:bg-gray-500 rounded-lg"
-  on:click={() => download()}
->
-  Download Resume
-</button>
+<div class="flex items-center space-x-2">
+  <button
+    class="py-2 px-4 text-xs bg-gray-600 hover:bg-gray-500 rounded-lg"
+    on:click={() => download()}
+  >
+    Download Resume
+  </button>
+  <div class="text-xs" hidden={nPressed.value === 0}>
+    {`(try switching to ${
+      darkMode ? "light" : "dark"
+    } mode and download the resume again)`}
+  </div>
+</div>

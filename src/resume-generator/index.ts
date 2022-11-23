@@ -1,8 +1,8 @@
-import "../assets/fonts/fa-brands-400-normal";
+import "./public/fonts/fa-brands-400-normal";
 
-import Margin from "./Margins";
-import Colors from "./Colors";
+import Margin from "./margins";
 import Icons from "./Icons";
 import Section from "./Section";
+import { Document } from "./Document";
 
-export { Margin, Colors, Icons, Section };
+export { Margin, Icons, Section, Document };

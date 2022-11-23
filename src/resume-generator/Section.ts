@@ -1,11 +1,13 @@
-import { jsPDF } from "jspdf";
-import Margin from "./Margins";
+import Margin from "./margins";
 import tailwindColors from "tailwindcss/colors";
+import { type ITheme, type IDocCursor, DEFAULT_THEME } from "./types";
+import jsPDF from "jspdf";
 
 export default class Section {
   protected parent?: Section;
   protected doc: jsPDF;
-  private _textOffset = 0;
+  protected cursor: IDocCursor = { x: 0, y: 0 };
+  theme: ITheme;
   fontSize: number;
   margin: Margin;
   spacing: number;
@@ -14,18 +16,18 @@ export default class Section {
   _offsetX: number;
   _offsetY: number;
 
-  constructor(
-    parent?: Section,
-    {
-      width = 595,
-      height = 842,
-      fontSize = 12,
-      margin = new Margin(),
-      spacing = 8,
-      offsetX = 0,
-      offsetY = 0,
-    } = {}
-  ) {
+  constructor({
+    parent = undefined,
+    width = 595,
+    height = 842,
+    fontSize = 12,
+    margin = new Margin(),
+    spacing = 8,
+    offsetX = 0,
+    offsetY = 0,
+    theme = DEFAULT_THEME,
+  } = {}) {
+    this.theme = theme;
     this.doc = this._constructDoc(width, height);
     if (parent) {
       this.setParent(parent);
@@ -80,6 +82,7 @@ export default class Section {
   setParent(parent: Section): Section {
     this.parent = parent;
     this.doc = parent.doc;
+    this.theme = parent.theme;
     return this;
   }
 
@@ -112,17 +115,42 @@ export default class Section {
   }
 
   setBackgroundColor(
-    color: string,
-    round: number | undefined = undefined
+    {
+      color,
+      isDarkMode,
+      round,
+    }: {
+      color: "primary" | "secondary";
+      isDarkMode?: boolean;
+      round?: number;
+    } = {
+      color: "primary",
+      isDarkMode: false,
+      round: undefined,
+    }
   ): Section {
+    const COLOR = this.theme.background[color][isDarkMode ? "dark" : "light"];
     return this.addRect({
       x: this.x,
       y: this.y,
       width: this.width,
       height: this.height,
-      color: color,
+      color: this._getThemeColor("background", color, isDarkMode),
       round: round,
     });
+  }
+
+  _getThemeColor(type: string, color: string, isDarkMode: boolean): string {
+    switch (type) {
+      case "background":
+        return this.theme.background[color][isDarkMode ? "dark" : "light"];
+      case "text":
+        return this.theme.textOptions.color[isDarkMode ? "dark" : "light"];
+      case "border":
+        return this.theme.borderColors[isDarkMode ? "dark" : "light"];
+      default:
+        return "white";
+    }
   }
 
   addRect(
@@ -150,6 +178,7 @@ export default class Section {
     }
   ): Section {
     const _defaults = this._getDefaults();
+    console.log("addRect", x, y, width, height, color, round);
     if (color) {
       this.setFillColor(color);
     }
@@ -162,26 +191,38 @@ export default class Section {
     return this;
   }
 
-  __executeAndResetDefaults(callback: CallableFunction, args: any) {
-    const _defaults = this._getDefaults();
-    callback(args);
-    this._resetDefaults(_defaults);
-  }
-
   setMargin(margin: Margin): Section {
     this.margin = margin;
     return this;
   }
 
+  addIcon({ icon, x, y, linkOptions = null, size = 16 }) {
+    const _defaults = this._getDefaults();
+
+    // Draw the icon
+    this.doc.setFont("fa-brands-400");
+    this.doc.setFontSize(size);
+
+    if (linkOptions) {
+      this.doc.textWithLink(icon, x, y, linkOptions);
+    } else {
+      this.doc.text(icon, x, y);
+    }
+
+    // Reset font
+    this._resetDefaults(_defaults);
+  }
+
   addText(
     {
       text,
-      align,
+      align = "left",
       fontSize = 12,
       offsetX = 0,
       offsetY = 0,
-      color = "black",
-      background = undefined,
+      color,
+      background,
+      padding = new Margin({ top: 0, right: 0, bottom: 0, left: 0 }),
     }: {
       text: string | string[];
       align?: "left" | "center" | "right" | "justify";
@@ -190,47 +231,42 @@ export default class Section {
       offsetY?: number;
       color?: string;
       background?: string;
-      paddingX?: number;
-      paddingY?: number;
-    } = {
-      text: "",
-      align: "left",
-      fontSize: 12,
-      offsetX: 0,
-      offsetY: 0,
-      color: "black",
-      background: undefined,
-      paddingX: 0,
-      paddingY: 0,
-    }
+      padding?: Margin;
+    } = { text: "", align: "left" }
   ): Section {
-    const padding = 4;
     const _defaults = this._getDefaults();
     const { _x, _y } = this._getTextOffsets(offsetX, offsetY, align);
     if (background) {
       const bgDim = this._getTextDimensions(text, fontSize);
+      if (background === "primary" || background === "secondary") {
+        background = this._getThemeColor("background", background, false);
+      }
       this.addRect({
-        x: _x - this._valueOrMaxWidth(bgDim.w) / 2,
+        x: _x - this._valueOrMaxWidth(bgDim.w) / 2 - padding.left,
         y: _y,
-        width: this._valueOrMaxWidth(bgDim.w),
-        height: this._valueOrMaxHeight(bgDim.h) + padding * 2,
+        width: this._valueOrMaxWidth(bgDim.w) + padding.left + padding.right,
+        height: this._valueOrMaxHeight(bgDim.h) + padding.top + padding.bottom,
         color: background,
         round: 4,
       });
     }
-    const hexColor = this.getColor(color);
-    this.doc.setTextColor(hexColor);
+
+    let textColor;
+    if (!color) {
+      textColor = this._getThemeColor("text", "primary", false);
+    }
+
+    this.doc.setTextColor(this.getColor(textColor));
     this.doc.setFontSize(fontSize);
 
-    this.doc.text(text, _x, _y + padding, {
+    this.doc.text(text, _x, _y + padding.top, {
       baseline: "top",
       maxWidth: this.maxWidth,
       align: align,
     });
-
-    this._textOffset += _y + this.spacing + padding * 2;
+    this.cursor.y += _y + padding.top + padding.bottom;
     this._resetDefaults(_defaults);
-    console.debug("addText", text, hexColor, color);
+    console.log("addText", text, textColor, color);
     return this;
   }
 
@@ -267,23 +303,26 @@ export default class Section {
 
   _getDefaults() {
     const color = this.doc.getFillColor();
+    const font = this.doc.getFont();
     const fontSize = this.doc.getFontSize();
     const textColor = this.doc.getTextColor();
-    return { color, fontSize, textColor };
+    return { color, font, fontSize, textColor };
   }
 
-  _resetDefaults({ color, fontSize, textColor }) {
+  _resetDefaults({ color, font, fontSize, textColor }) {
     this.doc.setFillColor(color);
+    this.doc.setFont(font.fontName, font.fontStyle);
     this.doc.setFontSize(fontSize);
     this.doc.setTextColor(textColor);
   }
 
   _getTextOffsets(offsetX, offsetY, align) {
+    console.log("_getTextOffsets", offsetX, offsetY, align);
     const _y =
       this.y +
-      this._textOffset +
+      this.cursor.y +
       offsetY +
-      (this._textOffset === 0 ? this.margin.top : 0);
+      (this.cursor.y === 0 ? this.margin.top : 0);
     let _x;
     switch (align) {
       case "left":
