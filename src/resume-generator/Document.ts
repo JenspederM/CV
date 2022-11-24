@@ -19,8 +19,7 @@ interface IOperation {
 
 class Root {
   private static instance: Root;
-  private _stack: IOperation[] = [];
-  private _docOptions: jsPDFOptions;
+  private _darkMode: boolean = false;
   _doc: jsPDF;
 
   protected constructor() {}
@@ -28,33 +27,24 @@ class Root {
   public static getInstance(docOptions?: jsPDFOptions): Root {
     if (!Root.instance) {
       Root.instance = new Root();
-      Root.instance._docOptions = docOptions;
       Root.instance._doc = new jsPDF(docOptions);
-      Root.instance._stack = [];
     }
     return Root.instance;
   }
 
-  regenerateDoc(): void {
-    Root.instance._doc = new jsPDF(Root.instance._docOptions);
+  setDarkMode(darkMode: boolean): void {
+    Root.instance._darkMode = darkMode;
   }
 
-  pushToStack(operation: IOperation): void {
-    Root.instance._stack.push(operation);
-  }
-
-  get stack(): IOperation[] {
-    return Root.instance._stack;
-  }
-
-  clearStack(): void {
-    Root.instance._stack = [];
+  get darkMode(): boolean {
+    return this._darkMode;
   }
 }
 
 export class DocumentBase {
   name: string;
   private _root: Root;
+  private _stack: IOperation[] = [];
   protected _parent: Document;
   protected cursor: IDocCursor;
   protected margin: Margin;
@@ -138,12 +128,33 @@ export class DocumentBase {
   }
 
   protected pushToStack(op: IOperation): void {
-    this._root.pushToStack(op);
+    this._stack.push(op);
+  }
+
+  protected getFullStack(stack: IOperation[] = []): IOperation[] {
+    if (this.children.length === 0) {
+      return [...stack, ...this._stack];
+    } else {
+      return this.children.reduce(
+        (acc, child) => {
+          return [...acc, ...child.getFullStack()];
+        },
+        [...stack, ...this._stack]
+      );
+    }
+  }
+
+  protected resetFullStack(): void {
+    this._stack = [];
+    this.children.forEach((child) => {
+      child.resetFullStack();
+    });
   }
 
   protected executeStack() {
-    this._root.regenerateDoc();
-    let fullStack = this._root.stack;
+    console.log();
+    let fullStack = this.getFullStack();
+
     this.logger.debug(
       `Executing stack: ${JSON.stringify(
         fullStack.map((op) => {
@@ -162,6 +173,9 @@ export class DocumentBase {
       op.doc[op.operation](...op.args);
       this._setDefaults(defaults);
     }
+
+    this.resetFullStack();
+
     return this;
   }
 
@@ -185,7 +199,7 @@ export class DocumentBase {
   }
 
   get isDarkMode(): boolean {
-    return this._parent ? this._parent.isDarkMode : this.darkMode;
+    return this._root.darkMode;
   }
 
   adjustCursor(x: number, y: number) {
@@ -203,7 +217,7 @@ export class DocumentBase {
       `Setting dark mode to '${value}' from '${this.darkMode}'`,
       "setIsDarkMode"
     );
-    this.darkMode = value;
+    this._root.setDarkMode(value);
     return this;
   }
 
@@ -260,7 +274,11 @@ class DocumentDrawer extends DocumentBase {
 
   protected _setBackground({ color = "white" }: { color: string }) {
     this.logger.debug(
-      `Setting background to '${color}' at (${this.cursor.x}, ${this.cursor.y})`,
+      `Setting background to '${color}' at (${
+        this.cursor.x + this.margin.left
+      }, ${this.cursor.y + this.margin.top}) with dimensions ${
+        this.width - this.margin.x
+      }x${this.height - this.margin.y}`,
       "_setBackground"
     );
     this.setFillColor(this._getColor({ type: "background", color: color }));
@@ -328,7 +346,8 @@ class DocumentDrawer extends DocumentBase {
 
     if (xPos + width > this.maxWidth) {
       console.warn("Element is too wide to fit on page");
-      this.root.stack.forEach((op) => {
+      const fullStack = this.getFullStack();
+      fullStack.forEach((op) => {
         if (op.operation !== "_setBackground") {
           const rect = op.args[0];
           if (rect.y + rect.height > tallestElement) {
@@ -509,8 +528,14 @@ export class Document extends DocumentDrawer {
       this.logger.debug(`Adjusting '${child.name}'`, "_adjustChildren");
 
       // Move cursor based on parent's cursor and margin
-      child.cursor.x = this.cursor.x + this.margin.left;
-      child.cursor.y = this.cursor.y + this.margin.top;
+      const newX = this.cursor.x + this.margin.left;
+      const newY = this.cursor.y + this.margin.top;
+      this.logger.debug(
+        `Moving '${child.name}' cursor from (${child.cursor.x}, ${child.cursor.y}) to (${newX}, ${newY})`,
+        "_adjustChildren"
+      );
+      child.cursor.x = newX;
+      child.cursor.y = newY;
 
       // Adjust child's width and height based on parent's width and height
       if (child.width > this.maxWidth) {
