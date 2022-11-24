@@ -26,12 +26,12 @@ export interface IDefaults {
 }
 
 export interface ITheme {
-  background: {
+  background?: {
     primary: IColor;
     secondary: IColor;
   };
-  textOptions: ITextOptions;
-  borderColors: IColor;
+  textOptions?: ITextOptions;
+  borderColors?: IColor;
   width: number;
   height: number;
 }
