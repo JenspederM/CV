@@ -41,7 +41,7 @@ export default class Logger {
 
   private constructMessage(message: string, method?: string): string {
     return method
-      ? `[${this.name}] ${method}(): ${message}`
-      : `[${this.name}] ${message}`;
+      ? `${new Date().toISOString()}: [${this.name}] ${method}(): ${message}`
+      : `${new Date().toISOString()}: [${this.name}] ${message}`;
   }
 }
