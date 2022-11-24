@@ -44,6 +44,49 @@
     height: 842,
   };
 
+  const resume = new Document({
+    theme: theme,
+    margin: Margin.none(),
+    name: "root",
+  })
+    .setIsDarkMode(darkMode)
+    .setBackground()
+    .addChild(
+      new Document({
+        theme: theme,
+        margin: Margin.large(),
+        name: "container",
+      })
+        .setBackground({
+          color: "secondary",
+        })
+        .addChild(
+          new Document({
+            theme: theme,
+            margin: Margin.medium(),
+            name: "sidebar",
+          })
+            .setBackground({ color: "white" })
+            .addChild(
+              new Document({
+                theme: Object.assign(theme, { width: 200, height: 100 }),
+                margin: Margin.medium(),
+                name: "test",
+              })
+                .setBackground({
+                  color: "black",
+                })
+                .addChild(
+                  new Document({
+                    theme: theme,
+                    margin: Margin.small(),
+                    name: "name",
+                  }).setBackground({ color: "blue-300" })
+                )
+            )
+        )
+    );
+
   const download = () => {
     if (nPressed.value === 0) {
       nPressed.value++;
@@ -95,9 +138,7 @@
 
       */
 
-    const doc = new Document(theme).setIsDarkMode(darkMode).setBackground();
-
-    doc.render({ preview: true });
+    resume.render({ preview: true });
 
     //resume.render({ preview: true });
   };
