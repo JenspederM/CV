@@ -1,34 +1,39 @@
 <script lang="ts">
   import Fa from "svelte-fa";
   import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
-  import { isDarkMode } from "../stores";
+  import { onMount } from "svelte";
 
-  let elem;
   let y;
-  let isDark = true;
-
-  isDarkMode.subscribe((value) => {
-    isDark = value;
-  });
 
   const toggleDarkMode = () => {
-    isDarkMode.update((value) => !value);
+    const root = document.querySelector("html");
+    if (root.classList.contains("dark")) {
+      root.classList.remove("dark");
+    } else {
+      root.classList.add("dark");
+    }
   };
 
   let background = "bg-gray-300 dark:bg-gray-700";
   let text = "text-gray-700 dark:text-gray-300";
   let border = "border-gray-400 dark:border-gray-600";
 
+  onMount(() => {
+    const body = document.body;
+    background.split(" ").forEach((c) => body.classList.add(c));
+  });
+
   const onScroll = () => {
     y = window.scrollY;
   };
 
   $: dynamicOpacity = Math.max(1 - Math.max(0, y / 40), 0);
+  $: isDarkMode = document.querySelector("html").classList.contains("dark");
 </script>
 
 <svelte:window on:scroll={onScroll} />
 
-<div class="min-w-full min-h-screen {isDark ? 'dark' : ''}">
+<div class="min-w-full min-h-screen">
   <!-- Dark Mode Button-->
   <button
     on:click={() => toggleDarkMode()}
@@ -36,7 +41,7 @@
     class="z-50 absolute top-6 right-6 float-right px-2 py-1 rounded-full bg-gray-700"
     style="opacity: {dynamicOpacity}"
   >
-    {isDark ? "☀️" : "🌙"}
+    {isDarkMode ? "☀️" : "🌙"}
   </button>
 
   <!-- Main Container-->
