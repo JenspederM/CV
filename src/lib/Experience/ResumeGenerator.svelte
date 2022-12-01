@@ -1,158 +1,46 @@
 <script lang="ts">
-  import { Section, Margin, Document } from "../../resume-generator";
+  import TailwindPDF from "../../tailwindPDF/Svelte/index.svelte";
   import { isDarkMode } from "../../stores";
 
   let darkMode: boolean;
-  let nPressed = {
-    value: 0,
-    lastDarkMode: false,
-  };
+
   isDarkMode.subscribe((value) => {
     darkMode = value;
   });
-
-  const brands = [
-    { icon: "\uf09b", url: "www.github.com/jenspederm" },
-    { icon: "\uf08c", url: "www.linkedin.com/in/jenspederm" },
-    { icon: "\uf099", url: "www.twitter.com/Peder0202" },
-  ];
-
-  const theme = {
-    background: {
-      primary: {
-        light: "gray-300",
-        dark: "gray-700",
-      },
-      secondary: {
-        light: "gray-200",
-        dark: "gray-800",
-      },
-    },
-    textOptions: {
-      color: {
-        light: "gray-300",
-        dark: "gray-700",
-      },
-      font: "Roboto",
-      fontSize: 12,
-    },
-    borderColors: {
-      light: "gray-400",
-      dark: "gray-600",
-    },
-    width: 595,
-    height: 842,
-  };
-
-  const download = () => {
-    if (nPressed.value === 0) {
-      nPressed.value++;
-      nPressed.lastDarkMode = darkMode;
-    } else if (nPressed.value > 1 && nPressed.lastDarkMode === darkMode) {
-      nPressed.value++;
-    } else {
-      nPressed.value = 0;
-    }
-
-    const name = new Document({
-      theme: theme,
-      margin: Margin.small(),
-      name: "name",
-    }).setBackground({ color: "blue-300" });
-
-    const test = new Document({
-      theme: Object.assign({}, theme, { width: 200, height: 100 }),
-      margin: Margin.medium(),
-      name: "test",
-    })
-      .setBackground({
-        color: "black",
-      })
-      .addChild(name);
-
-    const sidebar = new Document({
-      theme: theme,
-      margin: Margin.medium(),
-      name: "sidebar",
-    })
-      .setBackground({ color: "white" })
-      .addChild(test);
-
-    const container = new Document({
-      theme: theme,
-      margin: Margin.large(),
-      name: "container",
-    })
-      .setBackground({
-        color: "secondary",
-      })
-      .addChild(sidebar);
-
-    const resume = new Document({
-      theme: theme,
-      margin: Margin.none(),
-      name: "root",
-    })
-      .setIsDarkMode(darkMode)
-      .setBackground()
-      .addChild(container);
-
-    /*
-    const resume = new Section({ theme: theme })
-      .setMargin(Margin.medium())
-      .setBackgroundColor({ color: "primary", isDarkMode: darkMode });
-
-    const sidebar = new Section({ parent: resume })
-      .setSize({ width: 200, height: 842 })
-      .setMargin(Margin.large())
-      .setBackgroundColor({
-        color: "secondary",
-        isDarkMode: darkMode,
-        round: 4,
-      });
-
-    new Section({ parent: sidebar, width: 200, height: 100 })
-      .setMargin(Margin.medium())
-      .setBackgroundColor({ color: "primary", isDarkMode: darkMode, round: 4 })
-      .addText({
-        text: ["Jens Peder Meldgaard"],
-        fontSize: 18,
-        align: "center",
-        background: "secondary",
-        padding: new Margin({ top: 4, bottom: 4, left: 0 }),
-      })
-      .addText({
-        text: "Jack of All Trades",
-        fontSize: 12,
-        align: "center",
-      });
-
-    const content = new Section({ parent: resume })
-      .setMargin(Margin.medium())
-      .setOffset({ x: 208 })
-      .setBackgroundColor({
-        color: "secondary",
-        isDarkMode: darkMode,
-        round: 4,
-      });
-
-      */
-
-    resume.render({ preview: true });
-    //resume.render({ preview: true });
-  };
 </script>
 
-<div class="flex items-center space-x-2">
-  <button
-    class="py-2 px-4 text-xs bg-gray-600 hover:bg-gray-500 rounded-lg"
-    on:click={() => download()}
-  >
-    Download Resume
-  </button>
-  <div class="text-xs" hidden={nPressed.value === 0}>
-    {`(try switching to ${
-      darkMode ? "light" : "dark"
-    } mode and download the resume again)`}
-  </div>
+<div class="flex items-center justify-center space-x-2">
+  <TailwindPDF preview bind:darkMode>
+    <button slot="downloadButton" class="bg-gray-800 rounded-lg">
+      Download
+    </button>
+    <div class="bg-gray-300 text-black font-sans">This is a test</div>
+    <div class="bg-blue-600 text-white text-xs">This is another test</div>
+    <div class="bg-blue-600 text-white text-xs">
+      This is another another another another another another another another
+      another another another another another another another another another
+      another another another another another test
+    </div>
+    <div class="bg-blue-600 text-white">This is another test</div>
+    <div class="bg-gray-300 text-black text-right">
+      This is a very very very very very very very very very very very very very
+      very long string
+    </div>
+    <div class="bg-gray-300 text-black text-2xl text-justify">
+      This is a very very very very very very very very very very very very very
+      very long string This is a very very very very very very very very very
+      very very very very very long string This is a very very very very very
+      very very very very very very very very very long string This is a very
+      very very very very very very very very very very very very very long
+      string
+    </div>
+    <div class="bg-gray-300 text-black text-center font-bold">
+      This is a very very very very very very very very very very very very very
+      very long string This is a very very very very very very very very very
+      very very very very very long string This is a very very very very very
+      very very very very very very very very very long string This is a very
+      very very very very very very very very very very very very very long
+      string
+    </div>
+  </TailwindPDF>
 </div>
