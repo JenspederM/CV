@@ -17,23 +17,23 @@ interface IOperation {
   args: any[];
 }
 
-class Root {
-  private static instance: Root;
+class DocSingleton {
+  private static instance: DocSingleton;
   private _darkMode: boolean = false;
   _doc: jsPDF;
 
   protected constructor() {}
 
-  public static getInstance(docOptions?: jsPDFOptions): Root {
-    if (!Root.instance) {
-      Root.instance = new Root();
-      Root.instance._doc = new jsPDF(docOptions);
+  public static getInstance(docOptions?: jsPDFOptions): DocSingleton {
+    if (!DocSingleton.instance) {
+      DocSingleton.instance = new DocSingleton();
+      DocSingleton.instance._doc = new jsPDF(docOptions);
     }
-    return Root.instance;
+    return DocSingleton.instance;
   }
 
   setDarkMode(darkMode: boolean): void {
-    Root.instance._darkMode = darkMode;
+    DocSingleton.instance._darkMode = darkMode;
   }
 
   get darkMode(): boolean {
@@ -43,7 +43,7 @@ class Root {
 
 export class DocumentBase {
   name: string;
-  private _root: Root;
+  private _root: DocSingleton;
   private _stack: IOperation[] = [];
   protected _parent: Document;
   protected cursor: IDocCursor;
@@ -66,7 +66,7 @@ export class DocumentBase {
       floatPrecision: "smart",
     }
   ) {
-    this._root = Root.getInstance(docOptions);
+    this._root = DocSingleton.getInstance(docOptions);
     this.name = name;
     this.theme = Object.assign({}, DEFAULT_THEME, theme);
     this.margin = margin;
@@ -81,7 +81,7 @@ export class DocumentBase {
     this.logger.debug(`Cursor: ${JSON.stringify(this.cursor)}`, "constructor");
   }
 
-  protected get root(): Root {
+  protected get root(): DocSingleton {
     return this._root;
   }
 

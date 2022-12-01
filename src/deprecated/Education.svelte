@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Box from "../common/Box.svelte";
+  import Box from "../lib/common/Box.svelte";
   import { slide } from "svelte/transition";
 
   enum EducationType {
