@@ -1,7 +1,7 @@
 import type jsPDF from "jspdf";
 import { getLogger } from "./logging";
 import tailwindDefaults from "tailwindcss/defaultTheme";
-import { rem2px } from "src/tailwindPDF/utils";
+import { rem2px } from "./utils";
 
 const logger = getLogger("Typography");
 
